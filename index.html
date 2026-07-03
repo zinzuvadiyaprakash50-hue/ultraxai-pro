@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultrax AI</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f172a;
+  color:white;
+  display:flex;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* Sidebar */
+.menu{
+  width:220px;
+  background:#111827;
+  padding:10px;
+  height:100vh;
+  flex-shrink:0;
+  transition:transform 0.2s;
+  overflow-y:auto;
+}
+
+/* User Profile Section in Sidebar */
+.userProfile {
+  padding: 12px;
+  background: #1f2937;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #374151;
+}
+
+.userProfile .label {
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.userProfile .email {
+  font-size: 13px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 4px 0 10px 0;
+}
+
+.userProfile .logoutBtn {
+  width: 100%;
+  padding: 6px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.userProfile .logoutBtn:hover {
+  background: #dc2626;
+}
+
+.menu a{
+  display:block;
+  color:white;
+  text-decoration:none;
+  padding:10px;
+  margin:5px 0;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.menu a:hover{
+  background:#374151;
+}
+
+.menu a.active{
+  background:#2563eb;
+}
+
+/* Main Content Area */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  min-width:0;
+}
+
+/* Header */
+.header{
+  padding:15px;
+  background:#111827;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  position:relative;
+}
+
+.menuBtn, .dotsBtn{
+  cursor:pointer;
+  font-size:20px;
+}
+
+.dotsBtn{
+  margin-left:auto;
+}
+
+/* Dots dropdown */
+.dotsMenu{
+  display:none;
+  position:absolute;
+  right:10px;
+  top:50px;
+  background:#1f2937;
+  border-radius:8px;
+  overflow:hidden;
+  z-index:30;
+  min-width:160px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+
+.dotsMenu.open{
+  display:block;
+}
+
+.dotsMenu a{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:white;
+  text-decoration:none;
+  padding:10px 15px;
+  font-size:14px;
+}
+
+.dotsMenu a:hover{
+  background:#374151;
+}
+
+/* Chat area */
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+}
+
+/* Welcome Screen Containers & Option Cards Grid (AdSense-Friendly) */
+.welcomeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px 15px;
+  color: #f1f5f9;
+}
+
+.welcomeHeader {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #3b82f6;
+}
+
+.welcomeSub {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+  max-width: 550px;
+  line-height: 1.5;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 15px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.optionCard {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+.optionCard:hover {
+  background: #374151;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.optionCardIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.optionCardTitle {
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.optionCardDesc {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* Message bubbles */
+.msg{
+  padding:10px 15px;
+  margin:10px;
+  border-radius:10px;
+  max-width:80%;
+  word-wrap:break-word;
+  line-height:1.5;
+}
+
+.user{
+  background:#2563eb;
+  margin-left:auto;
+  white-space:pre-wrap;
+}
+
+.bot{
+  background:#374151;
+  margin-right:auto;
+  white-space:normal;
+}
+
+.bot ul, .bot ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.bot li {
+  margin-bottom: 4px;
+}
+
+/* Code Highlights and Custom Containers */
+.codeBlockContainer {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.codeBlockHeader {
+  background: #0f172a;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: monospace;
+  border-bottom: 1px solid #334155;
+  text-transform: uppercase;
+}
+
+.copyCodeBtn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.copyCodeBtn:hover {
+  background: #1e293b;
+  color: white;
+}
+
+.codeBlockContainer pre {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.codeBlockContainer code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13.5px;
+  color: #f8fafc;
+}
+
+.inlineCode {
+  background: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13.5px;
+  color: #f8fafc;
+}
+
+/* Button layout inside chat bubbles */
+.btnGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.msg .speakBtn{
+  background:none;
+  border:1px solid #4b5563;
+  color:#9ca3af;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:12px;
+  cursor:pointer;
+  transition: all 0.2s;
+}
+
+.msg .speakBtn:hover{
+  background: #4b5563;
+  color: white;
+}
+
+/* Gemini Style Input Area */
+.promptContainer {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 16px;
+  margin: 10px 15px 15px 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.promptContainer textarea {
+  background: transparent;
+  border: none;
+  color: white;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 120px;
+  min-height: 36px;
+  line-height: 1.4;
+}
+
+.inputToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toolBtn {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+
+.toolBtn:hover {
+  background: #374151;
+}
+
+.toolBtn.active {
+  background: #2563eb;
+  border-color: #3b82f6;
+}
+
+.toolBtn#micBtn.active {
+  background: #ef4444;
+  border-color: #f87171;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+}
+
+/* Modern Rounded Send Icon Button */
+.newSendBtn {
+  background: #22c55e;
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.newSendBtn:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}
+
+.newSendBtn:active {
+  transform: scale(0.95);
+}
+
+.newSendBtn:disabled {
+  background: #4b5563;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Modals */
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  z-index:40;
+  align-items:center;
+  justify-content:center;
+}
+
+.overlay.open{
+  display:flex;
+}
+
+.modal{
+  background:#1f2937;
+  border-radius:12px;
+  width:90%;
+  max-width:420px;
+  max-height:80vh;
+  overflow-y:auto;
+  padding:20px;
+}
+
+.modal h2{
+  margin-top:0;
+}
+
+.modal .closeBtn{
+  float:right;
+  cursor:pointer;
+  font-size:20px;
+  background:none;
+  border:none;
+  color:white;
+}
+
+.settingRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #374151;
+}
+
+.historyItem{
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-bottom:6px;
+  background:#111827;
+}
+
+.historyItem:hover{
+  background:#374151;
+}
+
+.historyItem .meta{
+  font-size:12px;
+  color:#9ca3af;
+}
+
+.emptyNote{
+  color:#9ca3af;
+  font-size:14px;
+}
+
+/* LOGIN OVERLAY CSS (Z-INDEX 100 Modal Style) */
+.loginOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85); /* Transparent Dark backdrop */
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.loginCard {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  text-align: center;
+  border: 1px solid #374151;
+}
+
+.loginCard h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.loginCard input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  background: #111827;
+  color: white;
+  box-sizing: border-box;
+}
+
+.loginCard input:focus {
+  outline: 2px solid #2563eb;
+}
+
+.loginCard button {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.loginCard button:hover {
+  background: #1d4ed8;
+}
+
+/* Mobile responsive */
+@media (max-width:700px){
+  .menu{
+    position:fixed;
+    left:0;
+    top:0;
+    transform:translateX(-100%);
+    z-index:20;
+  }
+  .menu.open{
+    transform:translateX(0);
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div class="loginOverlay" id="loginOverlay">
+  <div class="loginCard">
+    <button class="closeBtn" onclick="hideLoginModal()" style="float: right; background: none; border: none; color: white; cursor: pointer; font-size: 20px;">×</button>
+    <h2 style="color: #2563eb; text-align: left; margin-top: 10px;">⚡ Ultrax AI Login</h2>
+    <p style="color: #9ca3af; font-size: 14px; margin-bottom: 20px; text-align: left;">Please login with your Email and Password to continue.</p>
+    <form onsubmit="handleLogin(event)">
+      <input type="email" id="loginEmail" placeholder="Email Address" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+  </div>
+</div>
+
+<div class="menu" id="menu">
+  <!-- Profile details -->
+  <div class="userProfile">
+    <div class="label">Logged in as</div>
+    <div class="email" id="userEmailDisplay">Guest User</div>
+    <button class="logoutBtn" onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <a onclick="goHome()">🏠 Home</a>
+  <a onclick="newChat()">📝 New Chat</a>
+  <a onclick="openModal('historyModal')">📂 Chat History</a>
+  <a onclick="openModal('settingsModal')">⚙️ Settings</a>
+  <a onclick="openModal('privacyModal')">🔒 Privacy Policy</a>
+  <a onclick="openModal('termsModal')">📄 Terms</a>
+  <a onclick="openModal('contactModal')">📧 Contact</a>
+</div>
+
+<div class="main">
+
+  <div class="header">
+    <span class="menuBtn" onclick="toggleMenu()">☰</span>
+    <span>⚡ Ultrax AI Pro Chatbot</span>
+    <span class="dotsBtn" onclick="toggleDots()">⋮</span>
+
+    <div class="dotsMenu" id="dotsMenu">
+      <a onclick="newChat()">📝 New Chat</a>
+      <a onclick="openModal('historyModal')">📂 Chat History</a>
+      <a onclick="toggleVoiceOutput()">🔊 <span id="voiceOutLabel">Voice reply: Off</span></a>
+    </div>
+  </div>
+
+  <div class="chat" id="chat"></div>
+
+  <!-- Gemini Style Prompt Container -->
+  <div class="promptContainer">
+    <textarea id="input" placeholder="Type your message..."></textarea>
+    <div class="inputToolbar">
+      <div class="toolbarLeft">
+        <button class="toolBtn active" id="btnModeChat" title="Chat Mode">💬 Chat</button>
+        <button class="toolBtn" id="micBtn" onclick="toggleMic()" title="Voice input">🎤</button>
+      </div>
+      <div class="toolbarRight">
+        <!-- New rounded modern send button -->
+        <button class="newSendBtn" id="sendBtn" onclick="sendMsg()" title="Send message">➤</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div class="overlay" id="settingsModal">
+  <div class="modal">
+    <button class="closeBtn" onclick="closeModal('settingsModal')">×</button>
+    <h2>⚙️ Settings</h2>
+
+    <div class="settingRow">
+      <span>Voice reply (read AI answers aloud)</span>
+      <input type="checkbox" id="voiceOutToggle" onchange="onVoiceOutToggle()">
+    </div>
+
+    <div class="settingRow">
+      <span>Save chat history on this device</span>
+      <input type="checkbox" id="saveHistoryToggle" onchange="onSaveHistoryToggle()">
+    </div>
+
+    <div class="settingRow" style="border-bottom:none;">
+      <span>Clear all saved chat history</span>
+      <button class="iconBtn" style="width:auto;padding:8px 12px;" onclick="clearAllHistory()">🗑️</button>
+    </div>
+
+    <p class="emptyNote">Ultrax AI · Advanced Assistant powered by Gemini Pro.</p>
+  </div>
+</div>
+
+<!-- ===== CHAT HISTORY MODAL ===== -->
+<div class="overlay" id="historyModal">
+  <div class="modal">
+    <button class="closeBtn" onclick="closeModal('historyModal')">×</button>
+    <h2>📂 Chat History</h2>
+    <div id="historyList"></div>
+  </div>
+</div>
+
+<!-- ===== PRIVACY MODAL ===== -->
+<div class="overlay" id="privacyModal">
+  <div class="modal">
+    <button class="closeBtn" onclick="closeModal('privacyModal')">×</button>
+    <h2>🔒 Privacy Policy</h2>
+    <div class="emptyNote">
+      <p><strong>Last updated:</strong> July 2026</p>
+
+      <p><strong>1. Information We Collect</strong><br>
+      When you log in, we store the email address you enter locally in your browser. We do not verify this email or send you any communication through it.</p>
+
+      <p><strong>2. How Your Data Is Used</strong><br>
+      Ultrax AI sends your typed messages directly to Google's Gemini API to generate response contexts.</p>
+
+      <p><strong>3. Local Storage</strong><br>
+      Your login email, saved chat history, and app settings are stored only in your browser's local storage on your own device. This data is never uploaded to any proprietary server.</p>
+
+      <p><strong>4. Voice Processing</strong><br>
+      Audio processing for speech functions is handled entirely by your browser's native engines.</p>
+
+      <p style="margin-top: 15px; border-top: 1px solid #374151; padding-top: 15px;"><strong>Contact Details:</strong><br>
+      📧 Email ID: <a href="mailto:zinzuvadiyaprakash50@gmail.com" style="color:#2563eb; text-decoration:none;">zinzuvadiyaprakash50@gmail.com</a><br>
+      📞 Phone Number: <a href="tel:9313016269" style="color:#2563eb; text-decoration:none;">9313016269</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TERMS MODAL ===== -->
+<div class="overlay" id="termsModal">
+  <div class="modal">
+    <button class="closeBtn" onclick="closeModal('termsModal')">×</button>
+    <h2>📄 Terms & Conditions</h2>
+    <div class="emptyNote">
+      <p><strong>Last updated:</strong> July 2026</p>
+
+      <p><strong>1. Acceptance of Terms</strong><br>
+      By using Ultrax AI, you agree to these Terms & Conditions. If you do not agree, please discontinue use of the app.</p>
+
+      <p><strong>2. Description of Service</strong><br>
+      Ultrax AI is an advanced assistant chatbot interface that uses Google's Gemini API for generating responses. Ultrax AI is not affiliated with Google.</p>
+
+      <p><strong>3. Accuracy of Output</strong><br>
+      AI-generated responses may occasionally contain bugs, inefficiencies, or errors. Always verify technical and logical answers independently.</p>
+
+      <p><strong>4. Contact</strong><br>
+      Questions about these Terms can be sent to the contact details below.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTACT MODAL ===== -->
+<div class="overlay" id="contactModal">
+  <div class="modal">
+    <button class="closeBtn" onclick="closeModal('contactModal')">×</button>
+    <h2>📧 Contact Support</h2>
+    <div class="emptyNote">
+      <p>For support or feedback, please reach out directly:</p>
+      <p><strong>Contact Details:</strong><br>
+      📧 Email ID: <a href="mailto:zinzuvadiyaprakash50@gmail.com" style="color:#2563eb; text-decoration:none;">zinzuvadiyaprakash50@gmail.com</a><br>
+      📞 Phone Number: <a href="tel:9313016269" style="color:#2563eb; text-decoration:none;">9313016269</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+// अपनी सही Gemini API Key यहाँ डालें (AIzaSy...)
+const API_KEY = "AQ.Ab8RN6K03OolhleHlfgpunNXN0ZDllKmkwrXMSvIh6m5LVj-eg"; 
+const TEXT_MODEL = "gemini-2.5-pro";
+
+/* ===== DOM ===== */
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("sendBtn");
+const chat = document.getElementById("chat");
+const micBtn = document.getElementById("micBtn");
+const menuEl = document.getElementById("menu");
+const dotsMenuEl = document.getElementById("dotsMenu");
+
+/* ===== STATE ===== */
+let voiceOutputEnabled = false;
+let saveHistoryEnabled = false;
+let currentSessionId = null;
+let currentSessionMessages = []; 
+
+/* ===== INIT ===== */
+checkAuth();
+loadSettings();
+startNewSession();
+
+/* ===== AUTO-GROW TEXTAREA ===== */
+input.addEventListener("input", function() {
+  this.style.height = 'auto';
+  this.style.height = (this.scrollHeight) + 'px';
+});
+
+// Intercept typing if the guest tries to type without logging in
+input.addEventListener("focus", () => {
+  if (!isUserLoggedIn()) {
+    input.blur();
+    showLoginModal();
+  }
+});
+
+/* ===== ENTER KEY ===== */
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMsg();
+  }
+});
+
+/* ===== USER AUTHENTICATION (Login / Logout / AdSense-Friendly Modal) ===== */
+function isUserLoggedIn() {
+  return !!localStorage.getItem("ultrax_user");
+}
+
+function showLoginModal() {
+  document.getElementById("loginOverlay").style.display = "flex";
+}
+
+function hideLoginModal() {
+  document.getElementById("loginOverlay").style.display = "none";
+}
+
+function checkAuth() {
+  const user = localStorage.getItem("ultrax_user");
+  const userEmailDisplay = document.getElementById("userEmailDisplay");
+  const logoutBtn = document.querySelector(".logoutBtn");
+
+  if (!user) {
+    userEmailDisplay.textContent = "Guest User";
+    logoutBtn.textContent = "🔑 Log In";
+    logoutBtn.onclick = function() {
+      showLoginModal();
+    };
+  } else {
+    userEmailDisplay.textContent = user;
+    logoutBtn.textContent = "🚪 Logout";
+    logoutBtn.onclick = function() {
+      logout();
+    };
+  }
+}
+
+function handleLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  
+  if (email && password) {
+    localStorage.setItem("ultrax_user", email);
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPassword").value = "";
+    hideLoginModal();
+    checkAuth();
+  }
+}
+
+function logout() {
+  localStorage.removeItem("ultrax_user");
+  chat.innerHTML = "";
+  checkAuth();
+  startNewSession();
+}
+
+/* ===== MENU TOGGLE ===== */
+function toggleMenu() {
+  menuEl.classList.toggle("open");
+  dotsMenuEl.classList.remove("open");
+}
+
+function toggleDots() {
+  dotsMenuEl.classList.toggle("open");
+  menuEl.classList.remove("open");
+}
+
+function goHome() {
+  menuEl.classList.remove("open");
+  dotsMenuEl.classList.remove("open");
+}
+
+/* ===== MODALS ===== */
+function openModal(id) {
+  if (id === "historyModal") renderHistoryList();
+  document.getElementById(id).classList.add("open");
+  menuEl.classList.remove("open");
+  dotsMenuEl.classList.remove("open");
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove("open");
+}
+
+/* ===== SETTINGS PERSISTENCE ===== */
+function loadSettings() {
+  voiceOutputEnabled = localStorage.getItem("ultrax_voiceOut") === "1";
+  saveHistoryEnabled = localStorage.getItem("ultrax_saveHistory") === "1";
+  document.getElementById("voiceOutToggle").checked = voiceOutputEnabled;
+  document.getElementById("saveHistoryToggle").checked = saveHistoryEnabled;
+  updateVoiceOutLabel();
+}
+
+function onVoiceOutToggle() {
+  voiceOutputEnabled = document.getElementById("voiceOutToggle").checked;
+  localStorage.setItem("ultrax_voiceOut", voiceOutputEnabled ? "1" : "0");
+  updateVoiceOutLabel();
+}
+
+function toggleVoiceOutput() {
+  voiceOutputEnabled = !voiceOutputEnabled;
+  document.getElementById("voiceOutToggle").checked = voiceOutputEnabled;
+  localStorage.setItem("ultrax_voiceOut", voiceOutputEnabled ? "1" : "0");
+  updateVoiceOutLabel();
+}
+
+function updateVoiceOutLabel() {
+  document.getElementById("voiceOutLabel").textContent = "Voice reply: " + (voiceOutputEnabled ? "On" : "Off");
+}
+
+function onSaveHistoryToggle() {
+  saveHistoryEnabled = document.getElementById("saveHistoryToggle").checked;
+  localStorage.setItem("ultrax_saveHistory", saveHistoryEnabled ? "1" : "0");
+}
+
+/* ===== CHAT HISTORY & WELCOME SCREEN ===== */
+function startNewSession() {
+  currentSessionId = "session_" + Date.now();
+  currentSessionMessages = [];
+  renderWelcomeScreen();
+}
+
+function newChat() {
+  saveCurrentSessionIfNeeded();
+  chat.innerHTML = "";
+  input.value = "";
+  input.style.height = 'auto';
+  startNewSession();
+  menuEl.classList.remove("open");
+  dotsMenuEl.classList.remove("open");
+}
+
+function saveCurrentSessionIfNeeded() {
+  if (!saveHistoryEnabled || currentSessionMessages.length === 0) return;
+
+  const allSessions = getAllSessions();
+  allSessions[currentSessionId] = {
+    id: currentSessionId,
+    updatedAt: Date.now(),
+    messages: currentSessionMessages
+  };
+  localStorage.setItem("ultrax_sessions", JSON.stringify(allSessions));
+}
+
+function getAllSessions() {
+  try {
+    return JSON.parse(localStorage.getItem("ultrax_sessions") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function renderWelcomeScreen() {
+  if (currentSessionMessages.length > 0) return;
+  
+  chat.innerHTML = `
+    <div class="welcomeContainer" id="welcomeContainer">
+      <div class="welcomeHeader">⚡ Ultrax AI Pro</div>
+      <div class="welcomeSub">What can I help you draft, solve, debug, or analyze today? Select a specialized quick-launch tool below.</div>
+      <div class="cardGrid">
+        <div class="optionCard" onclick="applyTemplate('email')">
+          <div class="optionCardIcon">✉️</div>
+          <div class="optionCardTitle">Email Writer</div>
+          <div class="optionCardDesc">Draft polite, concise, and structured emails for professional or personal requests.</div>
+        </div>
+        <div class="optionCard" onclick="applyTemplate('article')">
+          <div class="optionCardIcon">✍️</div>
+          <div class="optionCardTitle">Article Writer</div>
+          <div class="optionCardDesc">Generate high-quality, structured, and SEO-friendly essays or blog articles.</div>
+        </div>
+        <div class="optionCard" onclick="applyTemplate('resume')">
+          <div class="optionCardIcon">📄</div>
+          <div class="optionCardTitle">Resume Builder</div>
+          <div class="optionCardDesc">Build professional resume outlines tailored precisely for your dream job description.</div>
+        </div>
+        <div class="optionCard" onclick="applyTemplate('math')">
+          <div class="optionCardIcon">📐</div>
+          <div class="optionCardTitle">Math Solver</div>
+          <div class="optionCardDesc">Solve complex math equations and algebraic problems with detailed step-by-step logic.</div>
+        </div>
+        <div class="optionCard" onclick="applyTemplate('code')">
+          <div class="optionCardIcon">💻</div>
+          <div class="optionCardTitle">Code Explainer</div>
+          <div class="optionCardDesc">Break down tricky programming codes and technical paradigms line-by-line.</div>
+        </div>
+        <div class="optionCard" onclick="applyTemplate('grammar')">
+          <div class="optionCardIcon">🔍</div>
+          <div class="optionCardTitle">Grammar Checker</div>
+          <div class="optionCardDesc">Polish your sentences, correct spelling, and fix grammar mistakes instantly.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function applyTemplate(type) {
+  if (!isUserLoggedIn()) {
+    showLoginModal();
+    return;
+  }
+
+  let promptText = "";
+  switch(type) {
+    case 'email':
+      promptText = "Write a professional email regarding [Subject]. Keep the tone polite, concise, and structured.";
+      break;
+    case 'article':
+      promptText = "Write a high-quality, SEO-optimized article on the topic: '[Topic]'. Include headings, subheadings, and a clean introduction.";
+      break;
+    case 'resume':
+      promptText = "Create a professional resume outline for a [Job Title] role. Include sections for Summary, Work Experience, Skills, and Education.";
+      break;
+    case 'math':
+      promptText = "Solve this mathematical equation step-by-step: [Insert Equation Here]. Explain the logic behind each step.";
+      break;
+    case 'code':
+      promptText = "Analyze and explain the following code block step-by-step:\n\n```\n[Insert Code Here]\n```";
+      break;
+    case 'grammar':
+      promptText = "Analyze and correct any grammatical errors in the following text, highlighting the changes made:\n\n\"[Insert Text Here]\"";
+      break;
+  }
+  input.value = promptText;
+  input.focus();
+  
+  // Auto grow textarea on text insert
+  input.style.height = 'auto';
+  input.style.height = (input.scrollHeight) + 'px';
+}
+
+function renderHistoryList() {
+  saveCurrentSessionIfNeeded();
+  const listEl = document.getElementById("historyList");
+  const sessions = getAllSessions();
+  const ids = Object.keys(sessions).sort((a, b) => sessions[b].updatedAt - sessions[a].updatedAt);
+
+  if (!saveHistoryEnabled) {
+    listEl.innerHTML = '<p class="emptyNote">Saving is off. Turn on "Save chat history" in Settings to keep conversations.</p>';
+    return;
+  }
+
+  if (ids.length === 0) {
+    listEl.innerHTML = '<p class="emptyNote">No saved conversations yet.</p>';
+    return;
+  }
+
+  listEl.innerHTML = "";
+  ids.forEach((id) => {
+    const session = sessions[id];
+    const firstUserMsg = session.messages.find((m) => m.role === "user");
+    const preview = firstUserMsg ? firstUserMsg.text.slice(0, 40) : "(empty)";
+    const date = new Date(session.updatedAt).toLocaleString();
+
+    const div = document.createElement("div");
+    div.className = "historyItem";
+    div.innerHTML = '<div>' + escapeHtml(preview) + '</div><div class="meta">' + date + "</div>";
+    div.onclick = () => loadSession(id);
+    listEl.appendChild(div);
+  });
+}
+
+function loadSession(id) {
+  const sessions = getAllSessions();
+  const session = sessions[id];
+  if (!session) return;
+
+  saveCurrentSessionIfNeeded();
+  chat.innerHTML = "";
+  currentSessionId = id;
+  currentSessionMessages = session.messages.slice();
+
+  currentSessionMessages.forEach((m) => {
+    addMsg(m.text, m.role, false);
+  });
+
+  closeModal("historyModal");
+}
+
+function clearAllHistory() {
+  localStorage.removeItem("ultrax_sessions");
+  renderHistoryList();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* Easy Markdown Formatter & Syntax Highlighting with Copy Button */
+function formatMarkdown(text) {
+  let html = escapeHtml(text);
+  
+  // Format Bold Text: **bold text**
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // Custom Code Block Parser with Custom ID and Copy Button (Improved spaces/syntax matching)
+  html = html.replace(/```(\w*)\s*\n([\s\S]*?)```/g, function(match, lang, code) {
+    const cleanCode = code.trim();
+    const randomId = "code_" + Math.random().toString(36).substr(2, 9);
+    return `
+      <div class="codeBlockContainer">
+        <div class="codeBlockHeader">
+          <span>${lang || 'code'}</span>
+          <button class="copyCodeBtn" onclick="copyCodeText('${randomId}')">📋 Copy</button>
+        </div>
+        <pre><code id="${randomId}">${cleanCode}</code></pre>
+      </div>
+    `;
+  });
+
+  // Inline Code parsing: `inline code`
+  html = html.replace(/`(.*?)`/g, '<code class="inlineCode">$1</code>');
+
+  // Bullet points supporting * and -
+  html = html.replace(/^\s*[\*\-]\s+(.*?)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+  html = html.replace(/<\/ul>\s*<ul>/g, '');
+  
+  return html;
+}
+
+/* Function to Copy Code Block Contents to Clipboard */
+function copyCodeText(id) {
+  const codeEl = document.getElementById(id);
+  if (!codeEl) return;
+  
+  navigator.clipboard.writeText(codeEl.innerText).then(() => {
+    const container = codeEl.closest('.codeBlockContainer');
+    if (!container) return;
+    const btn = container.querySelector('.copyCodeBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "✅ Copied!";
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+    }, 2000);
+  }).catch(() => {
+    alert("Could not copy code. Please select and copy manually.");
+  });
+}
+
+/* ===== ADD MESSAGE ===== */
+function addMsg(text, type, recordToSession) {
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+
+  const textNode = document.createElement("div");
+  if (type === "bot") {
+    textNode.innerHTML = formatMarkdown(text);
+  } else {
+    textNode.innerText = text;
+  }
+  div.appendChild(textNode);
+
+  // Create button group for bot responses (Speak button)
+  if (type === "bot") {
+    const btnGroup = document.createElement("div");
+    btnGroup.className = "btnGroup";
+    let hasButtons = false;
+
+    if (text && text !== "Thinking...") {
+      const speakBtn = document.createElement("button");
+      speakBtn.className = "speakBtn";
+      speakBtn.textContent = "🔊 Listen";
+      speakBtn.onclick = () => speakText(text);
+      btnGroup.appendChild(speakBtn);
+      hasButtons = true;
+    }
+
+    if (hasButtons) {
+      div.appendChild(btnGroup);
+    }
+  }
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+
+  if (recordToSession !== false) {
+    currentSessionMessages.push({ 
+      role: type, 
+      text
+    });
+    saveCurrentSessionIfNeeded();
+  }
+
+  return div;
+}
+
+/* ===== SEND MESSAGE ===== */
+async function sendMsg() {
+  if (!isUserLoggedIn()) {
+    showLoginModal();
+    return;
+  }
+
+  const text = input.value.trim();
+  if (!text) return;
+
+  // Clear welcome screen on the very first message
+  if (currentSessionMessages.length === 0) {
+    chat.innerHTML = "";
+  }
+
+  addMsg(text, "user", true);
+  
+  // Reset input
+  input.value = "";
+  input.style.height = 'auto';
+  sendBtn.disabled = true;
+
+  const botBubble = addMsg("Thinking...", "bot", true);
+
+  try {
+    const reply = await getAI(text);
+    botBubble.querySelector("div").innerHTML = formatMarkdown(reply);
+    
+    const last = currentSessionMessages[currentSessionMessages.length - 1];
+    if (last) {
+      last.text = reply;
+      saveCurrentSessionIfNeeded();
+    }
+    
+    // Listen button render
+    const existingBtnGroup = botBubble.querySelector(".btnGroup");
+    if (existingBtnGroup) existingBtnGroup.remove();
+    
+    const btnGroup = document.createElement("div");
+    btnGroup.className = "btnGroup";
+    
+    const speakBtn = document.createElement("button");
+    speakBtn.className = "speakBtn";
+    speakBtn.textContent = "🔊 Listen";
+    speakBtn.onclick = () => speakText(reply);
+    btnGroup.appendChild(speakBtn);
+    
+    botBubble.appendChild(btnGroup);
+
+    if (voiceOutputEnabled) speakText(reply);
+  } catch (err) {
+    botBubble.querySelector("div").innerText = "Error: " + err.message;
+  } finally {
+    sendBtn.disabled = false;
+  }
+}
+
+/* ===== GEMINI TEXT API CALL (WITH CONVERSATION MEMORY) ===== */
+async function getAI(msg) {
+  if (!API_KEY || API_KEY.startsWith("YOUR_REAL")) {
+    throw new Error("Gemini API key is not configured. Please paste your valid API Key in the HTML script tag.");
+  }
+
+  // Optimized System Instruction setting up Gemini Pro as an elite assistant
+  const systemInstructionText = "You are Ultrax AI, an elite, highly intelligent, and professional AI assistant powered by Gemini Pro. You provide advanced, accurate, and clear solutions across all topics, including software development, writing, mathematics, and logical reasoning. Respond naturally in the user's language.";
+
+  // Build the multi-turn conversation memory array
+  const contents = [];
+  const historyLimit = 12; // Retains last 12 messages of the conversation for context memory
+  const startIndex = Math.max(0, currentSessionMessages.length - historyLimit);
+
+  // Loop through past messages (except the very last one, which is the current turn)
+  for (let i = startIndex; i < currentSessionMessages.length - 1; i++) {
+    const historicalMsg = currentSessionMessages[i];
+    contents.push({
+      role: historicalMsg.role === "bot" ? "model" : "user",
+      parts: [{ text: historicalMsg.text }]
+    });
+  }
+
+  // Add the user's current message turn
+  contents.push({
+    role: "user",
+    parts: [{ text: msg }]
+  });
+
+  const res = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/" + TEXT_MODEL + ":generateContent?key=" + API_KEY,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: systemInstructionText }]
+        },
+        contents: contents
+      })
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    const apiMessage = data.error && data.error.message ? data.error.message : "Request failed.";
+    throw new Error(apiMessage);
+  }
+
+  const text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+  return text || "No response received from the AI.";
+}
+
+/* ===== VOICE INPUT (speech-to-text) ===== */
+const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+const isSecureCtx = window.isSecureContext === true ||
+  location.protocol === "https:" ||
+  location.hostname === "localhost" ||
+  location.hostname === "127.0.0.1";
+
+let recognizer = null;
+let listening = false;
+let micStartTimeout = null;
+
+if (!SpeechRecognitionClass) {
+  micBtn.disabled = true;
+  micBtn.title = "Voice input not supported in this browser";
+} else if (!isSecureCtx) {
+  micBtn.title = "Voice input needs HTTPS — open this app via a real https:// link, not a local file";
+} else {
+  recognizer = new SpeechRecognitionClass();
+  recognizer.lang = "en-US";
+  recognizer.interimResults = false;
+  recognizer.continuous = false;
+  recognizer.maxAlternatives = 1;
+
+  recognizer.onstart = function () {
+    if (micStartTimeout) clearTimeout(micStartTimeout);
+  };
+
+  recognizer.onresult = function (event) {
+    const transcript = event.results[0][0].transcript;
+    input.value = input.value ? input.value + " " + transcript : transcript;
+    input.style.height = 'auto';
+    input.style.height = (input.scrollHeight) + 'px';
+  };
+
+  recognizer.onerror = function (event) {
+    setListening(false);
+    let msg = "Voice input error.";
+    if (event.error === "not-allowed" || event.error === "permission-denied") {
+      msg = "Microphone permission was denied. Please allow mic access for this site in your browser settings and try again.";
+    } else if (event.error === "no-speech") {
+      msg = "No speech detected. Please try again and speak after tapping the mic.";
+    } else if (event.error === "network") {
+      msg = "Voice recognition needs an internet connection. Please check your connection and try again.";
+    } else if (event.error === "audio-capture") {
+      msg = "No microphone was found on this device.";
+    }
+    alert(msg);
+  };
+
+  recognizer.onend = function () {
+    setListening(false);
+  };
+}
+
+async function toggleMic() {
+  if (!SpeechRecognitionClass) {
+    alert("Voice input is not supported in this browser. Please use Chrome on Android.");
+    return;
+  }
+  if (!isSecureCtx) {
+    alert("Voice input only works when this app is opened over HTTPS (a real web link), not as a local file. Please host the page (e.g. GitHub Pages, Netlify) and open it via https://.");
+    return;
+  }
+  if (!recognizer) return;
+
+  if (listening) {
+    recognizer.stop();
+    return;
+  }
+
+  try {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+    }
+  } catch (permErr) {
+    alert("Microphone access was blocked. Please allow microphone permission for this site (check the padlock/site settings in your browser) and try again.");
+    return;
+  }
+
+  try {
+    recognizer.start();
+    setListening(true);
+    micStartTimeout = setTimeout(() => {
+      if (listening) setListening(false);
+    }, 8000);
+  } catch (startErr) {
+    setListening(false);
+    alert("Could not start voice input: " + (startErr && startErr.message ? startErr.message : "unknown error"));
+  }
+}
+
+function setListening(value) {
+  listening = value;
+  micBtn.classList.toggle("active", listening);
+}
+
+/* ===== VOICE OUTPUT (text-to-speech) ===== */
+const ttsSupported = "speechSynthesis" in window;
+let voicesCache = [];
+let currentUtterance = null;
+
+function loadVoices() {
+  if (!ttsSupported) return;
+  voicesCache = window.speechSynthesis.getVoices();
+}
+
+if (ttsSupported) {
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+} 
+
+function speakText(text) {
+  if (!ttsSupported) {
+    alert("Text-to-speech is not supported in this browser. Please use Chrome on Android.");
+    return;
+  }
+
+  const cleanText = text.replace(/\*\*/g, "").replace(/[#_`]/g, "").trim();
+  if (!cleanText) return;
+
+  window.speechSynthesis.cancel();
+
+  setTimeout(() => {
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    if (voicesCache.length === 0) loadVoices();
+    const preferredVoice = voicesCache.find(v => v.lang && v.lang.startsWith("en"));
+    if (preferredVoice) utterance.voice = preferredVoice;
+
+    utterance.onerror = () => {
+      alert("Sorry, voice playback failed. Please try again.");
+    };
+
+    currentUtterance = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, 60);
+}
+
+/* ===== SWIPE GESTURE NAVIGATION ===== */
+let startX = 0;
+let startY = 0;
+
+document.addEventListener("touchstart", function (e) {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchend", function (e) {
+  const endX = e.changedTouches[0].clientX;
+  const endY = e.changedTouches[0].clientY;
+
+  const diffX = endX - startX;
+  const diffY = endY - startY;
+
+  if (Math.abs(diffY) > Math.abs(diffX)) return;
+
+  if (startX < 40 && diffX > 80) {
+    menuEl.classList.add("open");
+  }
+
+  if (diffX < -80) {
+    menuEl.classList.remove("open");
+  }
+});
+
+chat.addEventListener("click", function () {
+  menuEl.classList.remove("open");
+});
+
+window.addEventListener("beforeunload", saveCurrentSessionIfNeeded);
+</script>
+
+</body>
+</html>
